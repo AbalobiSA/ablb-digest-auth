@@ -35,8 +35,12 @@ function wrapper(options, username, password) {
 
                 buildDigestRequest(arguments).then(new_options => {
                     // console.log(new_options);
-                    createSecondRequest(new_options).then(body => {
-                        resolve(body);
+                    createSecondRequest(new_options).then(response => {
+                        if (response.statusCode === 401) {
+                            reject(response);
+                        } else {
+                            resolve(response);
+                        }
                     }).catch(err => {
                         reject(err);
                     })
@@ -156,7 +160,7 @@ function createSecondRequest(options) {
             if (err) {
                 reject(err);
             } else {
-                resolve(body);
+                resolve(response);
             }
         });
     })
