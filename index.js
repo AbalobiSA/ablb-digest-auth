@@ -34,7 +34,7 @@ function wrapper(options, username, password) {
                 };
 
                 buildDigestRequest(arguments).then(new_options => {
-                    console.log(new_options);
+                    // console.log(new_options);
                     createSecondRequest(new_options).then(body => {
                         resolve(body);
                     }).catch(err => {
