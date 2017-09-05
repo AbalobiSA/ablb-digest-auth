@@ -1,5 +1,9 @@
 # Abalobi Digest Auth
 
+Installation:
+
+    $ yarn add git+https://git@github.com/AbalobiSA/ablb-digest-auth.git
+
 Usage example:
 
 ```
@@ -19,3 +23,4 @@ digest.request(OPTIONS, username, password).then(success => {
     console.log(ex);
 });
 ```
+
