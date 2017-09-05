@@ -104,12 +104,15 @@ function buildDigestRequest(args) {
             let nc = "";
 
             let beforeHA1 = username + ":" + realm + ":" + password;
-            let beforeHA2 = "GET:" + options.headers.path;
-
+            // console.log("Before HA1:", beforeHA1);
+            let beforeHA2 = args.options.method + ":" + options.headers.path;
+            // console.log("Before HA2:", beforeHA2);
             let ha1 = md5(beforeHA1);
             let ha2 = md5(beforeHA2);
+            let beforeResponse = ha1 + ":" + nonce + ":" + nc + ":" + cnonce + ":" + qop + ":" + ha2;
+            // console.log("Before Response:", beforeResponse);
             let actualResponse = md5(ha1 + ":" + nonce + ":" + nc + ":" + cnonce + ":" + qop + ":" + ha2);
-
+            //
             // console.log("Before 1st Hash: " + beforeHA1 + "\n" +
             //     "Before 2nd Hash: " + beforeHA2 + "\n" +
             //     "HA1: " + ha1 + "\n" +
@@ -147,8 +150,8 @@ function buildDigestRequest(args) {
             //NOW WE MAKE A SECOND REQUEST
             resolve(options2);
         } catch (ex) {
-            console.log("ERROR: \n" + ex);
-            console.log("BLEH");
+            // console.log("ERROR: \n" + ex);
+            // console.log("BLEH");
             reject(ex);
         }
     })
