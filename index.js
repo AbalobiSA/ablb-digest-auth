@@ -21,6 +21,66 @@ function wrapper(options, username, password) {
         console.log("Attempting request");
 
         request(options, (err, response, body) => {
+            if (err) {
+                reject(err);
+                return;
+            }
+
+            if (response.statusCode === 401) {
+                console.log("Request requires digest auth. Processing...");
+                // console.log(response.headers);
+
+                let arguments = {
+                    username: username,
+                    password: password,
+                    options: options,
+                    response: response,
+                    body: body
+                };
+
+                buildDigestRequest(arguments).then(new_options => {
+                    // console.log(new_options);
+                    createSecondRequest(new_options).then(response => {
+                        if (response.statusCode === 401) {
+                            reject(response);
+                        } else {
+                            resolve(response);
+                        }
+                    }).catch(err => {
+                        reject(err);
+                    })
+
+                }).catch(ex => {
+                    console.log(ex);
+                })
+                // Debug: reject for now
+                // reject(body);
+
+                // Store the headers
+
+                // Make the request again with digest auth
+            } else {
+                // You are already authenticated
+                resolve(body);
+            }
+        });
+
+    });
+}
+
+function post(options, username, password, body) {
+    return new Promise((resolve, reject) => {
+
+        let host = getHost(options.url);
+        let path = getPath(options.url);
+
+        options.headers.host = host;
+        options.headers.path = path;
+
+        // console.log(options);
+        console.log("Attempting request");
+
+        request(options, body, (err, response, body) => {
             if (response.statusCode === 401) {
                 console.log("Request requires digest auth. Processing...");
                 // console.log(response.headers);
@@ -158,6 +218,7 @@ function buildDigestRequest(args) {
 }
 
 function createSecondRequest(options) {
+    console.log("Request options: ", options);
     return new Promise((resolve, reject) => {
         request(options, (err, response, body) => {
             if (err) {
@@ -168,6 +229,8 @@ function createSecondRequest(options) {
         });
     })
 }
+
+
 
 
 /*==============================================================================
